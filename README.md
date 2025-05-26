@@ -1,148 +1,140 @@
-Document-Based QA Chatbot with ReAct Architecture
-Project Structure
+##Document-Based QA Chatbot with ReAct Architecture
+
+This is a document-based chatbot application that uses the ReAct (Reasoning + Acting) paradigm for answering user questions based on uploaded documents. It includes a FastAPI backend for APIs and a Streamlit frontend for user interaction. Documents are embedded into a vector store (ChromaDB), and queries are processed using OpenAI's GPT API.
+
+#Project Structure:
+
 doc-qa-chatbot/
-├── config/
-│   ├── __pycache__/
-│   └── settings.py
-├── data/ (auto-generated)
-├── src/
-│   ├── api/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   └── main.py
-│   ├── chatbot/
-│   ├── utils/
-│   │   └── __init__.py
-│   └── tests/
-│       ├── __init__.py
-│       └── test_basic.py
-├── venv/ (auto-generated)
-├── .env
-├── .gitignore
-├── app.py
-├── docker-compose.yml
-├── Dockerfile
-└── requirements.txt
-Setup Instructions
-1. Prerequisites
+
+config/
+
+settings.py: Configuration parameters like chunk size, temperature, etc.
+
+data/ (auto-generated)
+
+documents/: Stores uploaded documents
+
+chroma_db/: Stores vector database
+
+src/
+
+api/
+
+main.py: FastAPI routes
+
+chatbot/: Core chatbot logic (ReAct agents, tools, chains)
+
+utils/: Helper functions
+
+tests/: Unit tests
+
+app.py: Streamlit frontend
+
+Dockerfile: Docker image config
+
+docker-compose.yml: Docker service definition
+
+.env: Environment variables (API keys, paths)
+
+requirements.txt: Python dependencies
+
+venv/: Virtual environment (auto-generated)
+
+#Setup Instructions:
+
+Prerequisites:
+
 Python 3.9+
 
 Docker (optional)
 
-OpenAI API key
+OpenAI API Key
 
-2. Local Setup
-bash
-# Clone the repository (if applicable)
-git clone <your-repo-url>
-cd doc-qa-chatbot
+#Local Setup:
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# OR
-venv\Scripts\activate  # Windows
+Clone the repository and navigate to the folder.
 
-# Install dependencies
-pip install -r requirements.txt
+Create a virtual environment using: python -m venv venv
 
-# Create environment file
-echo "OPENAI_API_KEY=your_api_key_here" > .env
-echo "CHROMA_DB_PATH=./data/chroma_db" >> .env
-echo "UPLOAD_DIR=./data/documents" >> .env
+#Activate it:
 
-# Create data directories
-mkdir -p data/documents data/chroma_db
-3. Running the Application
-Option 1: Development Mode
-bash
-# Terminal 1 - Start FastAPI backend
-uvicorn src.api.main:app --reload --port 8000
+Linux/Mac: source venv/bin/activate
 
-# Terminal 2 - Start Streamlit frontend
-streamlit run app.py --server.port 8501
-Option 2: Production with Docker
-bash
-# Build and run containers
+Windows: venv\Scripts\activate
+
+#Install dependencies: pip install -r requirements.txt
+
+Create a .env file with:
+OPENAI_API_KEY=your_api_key_here
+CHROMA_DB_PATH=./data/chroma_db
+UPLOAD_DIR=./data/documents
+
+Make data directories: mkdir -p data/documents data/chroma_db
+
+Running the Application:
+
+Option 1 - Development Mode:
+
+Terminal 1: uvicorn src.api.main:app --reload --port 8000
+
+Terminal 2: streamlit run app.py --server.port 8501
+
+Option 2 - Production Mode (Docker):
+
 docker-compose up --build
 
-# To stop
-docker-compose down
-4. Accessing the Application
+To stop: docker-compose down
+
+Accessing the App:
+
 Streamlit UI: http://localhost:8501
 
 FastAPI Docs: http://localhost:8000/docs
 
-Usage Guide
-1. Uploading Documents
-Open the Streamlit UI (http://localhost:8501)
+#Usage Guide:
 
-Use the sidebar to upload PDF, DOCX, or TXT files
+Upload documents from the Streamlit sidebar (supports PDF, DOCX, TXT).
 
-Click "Upload Document" button
+Type a question in the input box and submit.
 
-2. Asking Questions
-Type your question in the chat input box
+The model returns an answer with supporting context.
 
-Press Enter or click the send button
+#API Endpoints:
 
-View the response with reasoning details
+POST /upload : Upload a document
 
-3. API Endpoints
-POST /upload: Upload documents
+POST /query : Ask a question
 
-POST /query: Submit questions
+GET /stats : Get system usage statistics
 
-GET /stats: Get system statistics
+#Configuration:
 
-Configuration Options
-Edit config/settings.py to modify:
+Settings can be adjusted in config/settings.py:
 
-python
-chunk_size = 1000  # Text chunk size for processing
-chunk_overlap = 200  # Overlap between chunks
-max_tokens = 4000  # Context window size
-temperature = 0.7  # LLM creativity level
-Testing
-bash
-# Run basic tests
-pytest tests/ -v
+chunk_size = 1000
 
-# Test API endpoints manually
-curl -X GET http://localhost:8000/stats
-Troubleshooting
-Common Issues
-Missing API Key:
+chunk_overlap = 200
 
-Ensure .env exists with OPENAI_API_KEY
+max_tokens = 4000
 
-Restart application after adding key
+temperature = 0.7
 
-Port Conflicts:
+#Testing:
 
-Change ports in docker-compose.yml or run commands
+Run tests: pytest src/tests/ -v
+Manual API test: curl -X GET http://localhost:8000/stats
 
-Document Processing Failures:
+#Troubleshooting:
 
-Check file permissions
+If OpenAI API Key is missing, ensure .env is created properly and restart.
 
-Verify supported formats (PDF, DOCX, TXT)
+If ports are busy, change them in docker-compose.yml or run commands with different ports.
 
-Docker Build Issues:
+If document processing fails, check file types or permissions.
 
-Clean build: docker-compose build --no-cache
+If Docker fails to build, try: docker-compose build --no-cache
 
-Maintenance
-Updating Dependencies
-Update requirements.txt
+#Maintenance:
 
-Rebuild containers:
-
-bash
-docker-compose up --build
-Resetting the Knowledge Base
-Delete contents of data/chroma_db
-
-Restart the application
-
-
+To update dependencies: edit requirements.txt and rebuild using docker-compose up --build
+To reset the knowledge base: delete data/chroma_db and restart the app
