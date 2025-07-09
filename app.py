@@ -18,8 +18,8 @@ st.set_page_config(
 )
 
 def main():
-    st.title("📚 Document QA Chatbot")
-    st.markdown("Upload documents and ask questions using ReAct methodology with planning and execution!")
+    st.title("📚 DocMate")
+    st.markdown("Upload relevant documents and ask questions!")
     
     # Sidebar for document management
     with st.sidebar:
